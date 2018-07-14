@@ -1,11 +1,22 @@
-var express = require("express");
-var app     = express();
-var path    = require("path");
+const secrets = require('./secrets');
+const mapboxgl = require('mapbox-gl');
 
-app.get('/',function(req,res){
-    res.sendFile(path.join(__dirname+'/index.html'));
+mapboxgl.accessToken = secrets.mapboxKey;
+const map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/basic-v9',
+    zoom: 13,
+    center: [4.899, 52.372]
 });
 
-app.listen(3000);
+const layerList = document.getElementById('menu');
+const inputs = layerList.getElementsByTagName('input');
 
-console.log("Running at Port 3000");
+function switchLayer(layer) {
+    const layerId = layer.target.id;
+    map.setStyle('mapbox://styles/mapbox/' + layerId + '-v9');
+}
+
+for (var i = 0; i < inputs.length; i++) {
+    inputs[i].onclick = switchLayer;
+}
